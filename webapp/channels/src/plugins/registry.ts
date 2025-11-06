@@ -703,6 +703,8 @@ export default class PluginRegistry {
      *
      * @deprecated Use {@link PluginRegistry.registerPostDropdownMenuAction} instead.
      */
+    // Register a component at the bottom of the post dropdown menu.
+    // Accepts a React component. Returns a unique identifier.
     registerPostDropdownMenuComponent = reArg(['component'], ({component}: DPluginComponentProp) => {
         if (!this.warnedAboutRegisterPostDropdownMenuComponent) {
             // eslint-disable-next-line no-console

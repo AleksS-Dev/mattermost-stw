@@ -1,0 +1,12 @@
+eroot/mattermost-server/webapp/channels/src/components/global_header/left_controls/product_menu/product_menu_list/product_menu_list.tsx
+
+/root/mattermost-server/webapp/channels/src/components/admin_console/billing/plan_details/feature_list.test.tsx
+/root/mattermost-server/webapp/channels/src/components/admin_console/billing/plan_details/__snapshots__/feature_list.test.tsx.snap
+/root/mattermost-server/webapp/channels/src/components/feature_restricted_modal/feature_restricted_modal.tsx
+/root/mattermost-server/webapp/channels/src/components/invitation_modal/invite_as.test.tsx
+/root/mattermost-server/webapp/channels/src/components/invitation_modal/invite_as.tsx
+/root/mattermost-server/webapp/channels/src/components/widgets/menu/menu_items/restricted_indicator.tsx
+/root/mattermost-server/webapp/channels/src/components/sidebar/sidebar_header/sidebar_team_menu.tsx
+/root/mattermost-server/webapp/channels/src/utils/cloud_utils.ts
+/root/mattermost-server/webapp/channels/src/utils/emoji.json
+/root/mattermost-server/webapp/channels/src/utils/constants.tsx

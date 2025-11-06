@@ -115,8 +115,11 @@ func (f *FeatureFlags) SetDefaults() {
 	f.EnableMattermostEntry = true
 	f.MobileSSOCodeExchange = true
 
+
 	// FEATURE_FLAG_REMOVAL: AutoTranslation - Remove this default when MVP is to be released
 	f.AutoTranslation = false
+
+
 }
 
 // ToMap returns the feature flags as a map[string]string

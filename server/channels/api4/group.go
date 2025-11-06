@@ -75,10 +75,6 @@ func (api *API) InitGroup() {
 	api.BaseRoutes.Channels.Handle("/{channel_id:[A-Za-z0-9]+}/groups",
 		api.APISessionRequired(getGroupsByChannel)).Methods(http.MethodGet)
 
-	// POST
-	api.BaseRoutes.Groups.Handle("/names",
-		api.APISessionRequired(getGroupsByNames)).Methods(http.MethodPost)
-
 	// GET /api/v4/teams/:team_id/groups
 	api.BaseRoutes.Teams.Handle("/{team_id:[A-Za-z0-9]+}/groups",
 		api.APISessionRequired(getGroupsByTeam)).Methods(http.MethodGet)

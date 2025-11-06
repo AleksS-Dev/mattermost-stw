@@ -2792,6 +2792,13 @@ func (c *Client4) SearchChannels(ctx context.Context, teamId string, search *Cha
 	}
 	defer closeBody(r)
 	return DecodeJSONFromResponse[[]*Channel](r)
+
+	var ch []*Channel
+	err = json.NewDecoder(r.Body).Decode(&ch)
+	if err != nil {
+		return nil, BuildResponse(r), NewAppError("SearchChannels", "api.marshal_error", nil, "", http.StatusInternalServerError).Wrap(err)
+	}
+	return ch, BuildResponse(r), nil
 }
 
 // SearchAllChannels search in all the channels. Must be a system administrator.
@@ -4698,6 +4705,7 @@ func (c *Client4) MigrateIdLdap(ctx context.Context, toAttribute string) (*Respo
 	return BuildResponse(r), nil
 }
 
+
 func (c *Client4) GetGroupsByNames(ctx context.Context, names []string) ([]*Group, *Response, error) {
 	path := fmt.Sprintf("%s/names", c.groupsRoute())
 
@@ -4708,6 +4716,8 @@ func (c *Client4) GetGroupsByNames(ctx context.Context, names []string) ([]*Grou
 	defer closeBody(r)
 	return DecodeJSONFromResponse[[]*Group](r)
 }
+
+
 
 // GetGroupsByChannel retrieves the Mattermost Groups associated with a given channel
 func (c *Client4) GetGroupsByChannel(ctx context.Context, channelId string, opts GroupSearchOpts) ([]*GroupWithSchemeAdmin, int, *Response, error) {
@@ -7589,6 +7599,26 @@ func (c *Client4) GetPostPropertyValues(ctx context.Context, postId string) ([]P
 	}
 	defer closeBody(r)
 	return DecodeJSONFromResponse[[]PropertyValue](r) // TODO: Fix!
+}
+
+func (c *Client4) PatchCPAValuesForUser(ctx context.Context, userID string, values map[string]json.RawMessage) (map[string]json.RawMessage, *Response, error) {
+	buf, err := json.Marshal(values)
+	if err != nil {
+		return nil, nil, NewAppError("PatchCPAValuesForUser", "api.marshal_error", nil, "", http.StatusInternalServerError).Wrap(err)
+	}
+
+	r, err := c.DoAPIPatchBytes(ctx, c.userCustomProfileAttributesRoute(userID), buf)
+	if err != nil {
+		return nil, BuildResponse(r), err
+	}
+	defer closeBody(r)
+
+	var patchedValues map[string]json.RawMessage
+	if err := json.NewDecoder(r.Body).Decode(&patchedValues); err != nil {
+		return nil, nil, NewAppError("PatchCPAValuesForUser", "api.unmarshal_error", nil, "", http.StatusInternalServerError).Wrap(err)
+	}
+
+	return patchedValues, BuildResponse(r), nil
 }
 
 // Access Control Policies Section

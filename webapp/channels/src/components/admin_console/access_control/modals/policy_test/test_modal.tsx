@@ -93,6 +93,8 @@ function TestResultsModal({
         <GenericModal
             className='TestResultsModal a11y__modal'
             id='testResultsModal'
+        <Modal
+            dialogClassName='a11y__modal more-modal TestResultsModal'
             show={true}
             onHide={onExited}
             onExited={onExited}

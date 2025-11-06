@@ -1,10 +1,11 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
+import type {GroupSearchParams} from '@mattermost/types/groups';
 import type {PostList, Post, PostAcknowledgement, PostEmbed, PostPreviewMetadata} from '@mattermost/types/posts';
 import type {UserProfile} from '@mattermost/types/users';
 
-import {getGroupsByNames} from 'mattermost-redux/actions/groups';
+import {searchGroups} from 'mattermost-redux/actions/groups';
 import {getNeededAtMentionedUsernamesAndGroups} from 'mattermost-redux/actions/posts';
 import {
     getProfilesByIds,
@@ -199,6 +200,17 @@ export function getUsersFromMentionedUsernamesAndGroups(usernamesAndGroups: stri
 
         if (isLicensed && mentionedGroups.length > 0) {
             await dispatch(getGroupsByNames(mentionedGroups));
+        if (isLicensed) {
+            for (const group of mentionedGroups) {
+                const groupSearchParam: GroupSearchParams = {
+                    q: group,
+                    filter_allow_reference: true,
+                    page: 0,
+                    per_page: 60,
+                };
+
+                dispatch(searchGroups(groupSearchParam));
+            }
         }
 
         return {data: mentionedGroups};

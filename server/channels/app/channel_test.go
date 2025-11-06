@@ -2909,12 +2909,14 @@ func TestGetDirectOrGroupMessageMembersCommonTeams(t *testing.T) {
 
 	t.Run("Get teams for GM channel", func(t *testing.T) {
 		commonTeams, appErr := th.App.GetDirectOrGroupMessageMembersCommonTeams(th.Context, gmChannel.Id)
+		commonTeams, appErr := th.App.GetGroupMessageMembersCommonTeams(th.Context, gmChannel.Id)
 		require.Nil(t, appErr)
 		require.Equal(t, 2, len(commonTeams))
 	})
 
 	t.Run("No common teams", func(t *testing.T) {
 		commonTeams, appErr := th.App.GetDirectOrGroupMessageMembersCommonTeams(th.Context, otherGMChannel.Id)
+		commonTeams, appErr := th.App.GetGroupMessageMembersCommonTeams(th.Context, otherGMChannel.Id)
 		require.Nil(t, appErr)
 		require.Equal(t, 0, len(commonTeams))
 	})

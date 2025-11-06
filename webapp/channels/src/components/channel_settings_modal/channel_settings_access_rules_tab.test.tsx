@@ -1017,6 +1017,11 @@ describe('components/channel_settings_modal/ChannelSettingsAccessRulesTab', () =
             await userEvent.click(saveButton);
             await userEvent.click(saveButton);
 
+            // Wait for async operations to complete
+            await waitFor(() => {
+                expect(mockActions.saveChannelPolicy).toHaveBeenCalled();
+            });
+
             // Should only have been called once due to duplicate prevention
             expect(mockActions.saveChannelPolicy).toHaveBeenCalledTimes(1);
         });

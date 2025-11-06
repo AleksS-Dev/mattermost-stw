@@ -17,6 +17,36 @@ let mockPrivateChannelPermission = true;
 let mockPublicChannelPermission = true;
 let mockManageChannelAccessRulesPermission = false;
 
+// Variable to control group-constrained status in tests
+let mockGroupConstrained = false;
+
+// Mock the redux selectors
+jest.mock('mattermost-redux/selectors/entities/channels', () => ({
+    getChannel: jest.fn().mockImplementation((state, channelId) => {
+        // Return a mock channel based on the channelId
+        return {
+            id: channelId,
+            team_id: 'team1',
+            display_name: 'Test Channel',
+            name: channelId === 'default_channel' ? 'town-square' : 'test-channel',
+            purpose: 'Testing purpose',
+            header: 'Channel header',
+            type: mockChannelType, // Use a variable to control the channel type
+            create_at: 0,
+            update_at: 0,
+            delete_at: 0,
+            last_post_at: 0,
+            total_msg_count: 0,
+            extra_update_at: 0,
+            creator_id: 'creator1',
+            last_root_post_at: 0,
+            scheme_id: '',
+            group_constrained: mockGroupConstrained,
+        };
+    }),
+}));
+
+
 // Mock the channel banner selector
 jest.mock('mattermost-redux/selectors/entities/channel_banner', () => ({
     selectChannelBannerEnabled: jest.fn().mockImplementation((state) => {
@@ -170,6 +200,7 @@ describe('ChannelSettingsModal', () => {
         mockPrivateChannelPermission = true;
         mockPublicChannelPermission = true;
         mockManageChannelAccessRulesPermission = false; // Default to no access rules permission
+        mockGroupConstrained = false; // Default to not group-constrained
     });
 
     it('should render the modal with correct header text', async () => {
@@ -461,6 +492,7 @@ describe('ChannelSettingsModal', () => {
         });
 
         it('should not show Access Control tab for group-constrained private channel even with permission', async () => {
+
             mockManageChannelAccessRulesPermission = true;
 
             const testState = makeTestState();
@@ -468,6 +500,13 @@ describe('ChannelSettingsModal', () => {
             testState.entities.channels.channels[channelId].group_constrained = true;
 
             renderWithContext(<ChannelSettingsModal {...baseProps}/>, testState);
+
+            mockChannelType = 'P';
+            mockManageChannelAccessRulesPermission = true;
+            mockGroupConstrained = true;
+
+            renderWithContext(<ChannelSettingsModal {...baseProps}/>);
+
 
             // Wait for the sidebar to load
             await waitFor(() => {
@@ -480,6 +519,7 @@ describe('ChannelSettingsModal', () => {
         });
 
         it('should not show Access Control tab for group-constrained private channel without permission', async () => {
+
             mockManageChannelAccessRulesPermission = false;
 
             const testState = makeTestState();
@@ -487,6 +527,13 @@ describe('ChannelSettingsModal', () => {
             testState.entities.channels.channels[channelId].group_constrained = true;
 
             renderWithContext(<ChannelSettingsModal {...baseProps}/>, testState);
+
+            mockChannelType = 'P';
+            mockManageChannelAccessRulesPermission = false;
+            mockGroupConstrained = true;
+
+            renderWithContext(<ChannelSettingsModal {...baseProps}/>);
+
 
             // Wait for the sidebar to load
             await waitFor(() => {
@@ -499,12 +546,20 @@ describe('ChannelSettingsModal', () => {
         });
 
         it('should not show Access Control tab for group-constrained public channel', async () => {
+
             mockManageChannelAccessRulesPermission = true;
 
             const testState = makeTestState();
             testState.entities.channels.channels[channelId].group_constrained = true;
 
             renderWithContext(<ChannelSettingsModal {...baseProps}/>, testState);
+
+            mockChannelType = 'O';
+            mockManageChannelAccessRulesPermission = true;
+            mockGroupConstrained = true;
+
+            renderWithContext(<ChannelSettingsModal {...baseProps}/>);
+
 
             // Wait for the sidebar to load
             await waitFor(() => {
@@ -515,6 +570,7 @@ describe('ChannelSettingsModal', () => {
             expect(screen.queryByRole('tab', {name: 'access_rules'})).not.toBeInTheDocument();
             expect(screen.queryByText('Access Control')).not.toBeInTheDocument();
         });
+
     });
 
     describe('warn-once modal closing behavior', () => {
@@ -618,5 +674,7 @@ describe('ChannelSettingsModal', () => {
                 expect(baseProps.onExited).toHaveBeenCalled();
             });
         });
+
+
     });
 });
